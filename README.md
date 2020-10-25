@@ -51,8 +51,6 @@ To connect to your database run the following command:
 
     kubectl run db-production-postgresql-client --rm --tty -i --restart='Never' --namespace master --image docker.io/bitnami/postgresql:11.9.0-debian-10-r48 --env="PGPASSWORD=$POSTGRES_PASSWORD" --command -- psql --host db-production-postgresql -U postgres -d postgres -p 5432
 
-
-
 To connect to your database from outside the cluster execute the following commands:
 
     kubectl port-forward --namespace master svc/db-production-postgresql 5432:5432 &
