@@ -199,7 +199,8 @@ CREATE OR REPLACE FUNCTION users_management() RETURNS trigger AS $trg_users_ins_
       SELECT TRUE
       INTO V_EXIST_USERNAME
       FROM USERS 
-      WHERE LOWER(USERNAME) = NEW.USERNAME;
+      WHERE LOWER(USERNAME) = NEW.USERNAME
+      AND ID!=NEW.ID;
       IF V_EXIST_USERNAME THEN
         RAISE EXCEPTION 'cannot have two users with same username';
       END IF;
