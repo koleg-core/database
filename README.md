@@ -71,4 +71,4 @@ pg_dump -Cs -h 127.0.0.1 -U postgres -W > schema/koleg.sql
 ```
 
 ### Restore
-
+TODO
