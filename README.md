@@ -56,3 +56,19 @@ To connect to your database from outside the cluster execute the following comma
     kubectl port-forward --namespace master svc/db-production-postgresql 5432:5432 &
     PGPASSWORD="$POSTGRES_PASSWORD" psql --host 127.0.0.1 -U postgres -d postgres -p 5432
 
+
+## Maintenance
+### Dump
+To dump database get the password with:
+```bash
+kubectl get secret --namespace develop db-develop-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode
+```
+
+Then run and fill password:
+```bash
+# This host assume that you are using `make forward` or make `forward-master`
+pg_dump -Cs -h 127.0.0.1 -U postgres -W > schema/koleg.sql
+```
+
+### Restore
+
