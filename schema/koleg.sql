@@ -16,6 +16,7 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+DROP DATABASE postgres;
 --
 -- Name: postgres; Type: DATABASE; Schema: -; Owner: postgres
 --

@@ -58,17 +58,45 @@ To connect to your database from outside the cluster execute the following comma
 
 
 ## Maintenance
+### Requirements
+- `kubectl`
+- kubernetes token
+- `postgresql`
+
 ### Dump
-To dump database get the password with:
+#### With psql
+If you have kubernetes cluster access run:
 ```bash
-kubectl get secret --namespace develop db-develop-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode
+# This assume that you are using `make forward` or make `forward-master`
+export POSTGRES_PASSWORD=$(kubectl get secret --namespace develop db-develop-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
+PGPASSWORD="$POSTGRES_PASSWORD" pg_dump -Csc -h 127.0.0.1 -U postgres > schema/koleg.sql
 ```
 
-Then run and fill password:
+If you want to restore on master cluster replace first line `develop` with `master` namespace and `db-production-postgresql`:
 ```bash
-# This host assume that you are using `make forward` or make `forward-master`
-pg_dump -Cs -h 127.0.0.1 -U postgres -W > schema/koleg.sql
+# This assume that you are using `make forward` or make `forward-master`
+export POSTGRES_PASSWORD=$(kubectl get secret --namespace master db-production-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
+PGPASSWORD="$POSTGRES_PASSWORD" pg_dump -Csc -h 127.0.0.1 -U postgres > schema/koleg.sql
 ```
+
+#### With kubectl only
+TODO
 
 ### Restore
+#### With psql
+If you have kubernetes cluster access run:
+```bash
+# This assume that you are using `make forward` or make `forward-master`
+export POSTGRES_PASSWORD=$(kubectl get secret --namespace develop db-develop-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
+PGPASSWORD="$POSTGRES_PASSWORD" psql --host 127.0.0.1 -U postgres -d postgres -p 5432 < schema/koleg.sql
+```
+
+If you want to restore on master cluster replace first line `develop` with `master` namespace and `db-production-postgresql`:
+```bash
+# This assume that you are using `make forward` or make `forward-master`
+export POSTGRES_PASSWORD=$(kubectl get secret --namespace master db-production-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
+PGPASSWORD="$POSTGRES_PASSWORD" psql --host 127.0.0.1 -U postgres -d postgres -p 5432 < schema/koleg.sql
+```
+
+#### With kubectl only
 TODO
