@@ -58,7 +58,7 @@ CREATE FUNCTION public.users_gestion() RETURNS trigger
     BEGIN
       -- Forcer email en minuscule
       NEW.EMAIL := LOWER(NEW.EMAIL);
-
+      
       IF TG_OP = 'UPDATE' THEN
         IF COALESCE (NEW.PASSWORD, '???') != COALESCE (OLD.PASSWORD, '???')
           THEN
@@ -96,14 +96,14 @@ CREATE FUNCTION public.users_management() RETURNS trigger
     IF NEW.USERNAME IS NOT NULL THEN
       SELECT TRUE
       INTO V_EXIST_USERNAME
-      FROM USERS
+      FROM USERS 
       WHERE LOWER(USERNAME) = NEW.USERNAME
       AND ID!=NEW.ID;
       IF V_EXIST_USERNAME THEN
         RAISE EXCEPTION 'cannot have two users with same username';
       END IF;
     END IF;
-
+    
     IF TG_OP = 'UPDATE' THEN
       IF COALESCE (NEW.PASSWORD, '???') != COALESCE (OLD.PASSWORD, '???') THEN
           V_PASSWORD := COALESCE (OLD.PASSWORD, '???');
@@ -174,18 +174,6 @@ CREATE TABLE public.group_rights (
 ALTER TABLE public.group_rights OWNER TO postgres;
 
 --
--- Name: group_rights_attr; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.group_rights_attr (
-    id_group_rights integer NOT NULL,
-    id_attributes integer NOT NULL
-);
-
-
-ALTER TABLE public.group_rights_attr OWNER TO postgres;
-
---
 -- Name: group_rights_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -213,13 +201,13 @@ ALTER SEQUENCE public.group_rights_id_seq OWNED BY public.group_rights.id;
 
 CREATE TABLE public.groups (
     id integer NOT NULL,
+    uuid character varying(255),
     name character varying(500),
+    creation_date date,
+    update_date timestamp without time zone,
     description character varying,
     img_url character varying(255),
-    id_parentgroup integer,
-    uuid character varying(255),
-    creation_date date,
-    update_date timestamp without time zone
+    id_parentgroup integer
 );
 
 
@@ -392,18 +380,6 @@ CREATE TABLE public.user_rights (
 
 
 ALTER TABLE public.user_rights OWNER TO postgres;
-
---
--- Name: user_rights_attr; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.user_rights_attr (
-    id_user_rights integer NOT NULL,
-    id_attributes integer NOT NULL
-);
-
-
-ALTER TABLE public.user_rights_attr OWNER TO postgres;
 
 --
 -- Name: user_rights_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -584,14 +560,6 @@ ALTER TABLE ONLY public.attributes
 
 
 --
--- Name: group_rights_attr group_rights_attr_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.group_rights_attr
-    ADD CONSTRAINT group_rights_attr_pkey PRIMARY KEY (id_group_rights, id_attributes);
-
-
---
 -- Name: group_rights group_rights_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -656,14 +624,6 @@ ALTER TABLE ONLY public.user_groups
 
 
 --
--- Name: user_rights_attr user_rights_attr_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.user_rights_attr
-    ADD CONSTRAINT user_rights_attr_pkey PRIMARY KEY (id_user_rights, id_attributes);
-
-
---
 -- Name: user_rights user_rights_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -719,35 +679,11 @@ ALTER TABLE ONLY public.user_groups
 
 
 --
--- Name: user_rights_attr fk_id_attributes_user; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.user_rights_attr
-    ADD CONSTRAINT fk_id_attributes_user FOREIGN KEY (id_attributes) REFERENCES public.attributes(id) ON DELETE CASCADE;
-
-
---
--- Name: group_rights_attr fk_id_attributes_user; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.group_rights_attr
-    ADD CONSTRAINT fk_id_attributes_user FOREIGN KEY (id_attributes) REFERENCES public.attributes(id) ON DELETE CASCADE;
-
-
---
--- Name: group_rights_attr fk_id_group_rights_attr; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.group_rights_attr
-    ADD CONSTRAINT fk_id_group_rights_attr FOREIGN KEY (id_group_rights) REFERENCES public.group_rights(id) ON DELETE CASCADE;
-
-
---
 -- Name: groups fk_id_parentgroup; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.groups
-    ADD CONSTRAINT fk_id_parentgroup FOREIGN KEY (id_parentgroup) REFERENCES public.groups(id) ON DELETE CASCADE;
+    ADD CONSTRAINT fk_id_parentgroup FOREIGN KEY (id_parentgroup) REFERENCES public.groups(id) ON DELETE SET NULL;
 
 
 --
@@ -764,14 +700,6 @@ ALTER TABLE ONLY public.user_phones
 
 ALTER TABLE ONLY public.users_pwd_history
     ADD CONSTRAINT fk_id_user_pwd_history FOREIGN KEY (id_user) REFERENCES public.users(id) ON DELETE CASCADE;
-
-
---
--- Name: user_rights_attr fk_id_user_rights_attr; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.user_rights_attr
-    ADD CONSTRAINT fk_id_user_rights_attr FOREIGN KEY (id_user_rights) REFERENCES public.user_rights(id) ON DELETE CASCADE;
 
 
 --
