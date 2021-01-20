@@ -16,17 +16,15 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
-DROP DATABASE postgres;
+--  DROP DATABASE IF EXISTS koleg;
 --
--- Name: postgres; Type: DATABASE; Schema: -; Owner: postgres
+-- Name: koleg; Type: DATABASE; Schema: -; Owner: -
 --
 
-CREATE DATABASE postgres WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE = 'en_US.UTF-8';
+CREATE DATABASE koleg WITH TEMPLATE = template0 ENCODING = 'UTF8' -- LOCALE = 'en_US.UTF-8';
 
 
-ALTER DATABASE postgres OWNER TO postgres;
-
-\connect postgres
+\connect koleg
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -40,14 +38,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: DATABASE postgres; Type: COMMENT; Schema: -; Owner: postgres
---
-
-COMMENT ON DATABASE postgres IS 'default administrative connection database';
-
-
---
--- Name: users_gestion(); Type: FUNCTION; Schema: public; Owner: postgres
+-- Name: users_gestion(); Type: FUNCTION; Schema: public; Owner: -
 --
 
 CREATE FUNCTION public.users_gestion() RETURNS trigger
@@ -59,7 +50,7 @@ CREATE FUNCTION public.users_gestion() RETURNS trigger
     BEGIN
       -- Forcer email en minuscule
       NEW.EMAIL := LOWER(NEW.EMAIL);
-      
+
       IF TG_OP = 'UPDATE' THEN
         IF COALESCE (NEW.PASSWORD, '???') != COALESCE (OLD.PASSWORD, '???')
           THEN
@@ -77,10 +68,8 @@ CREATE FUNCTION public.users_gestion() RETURNS trigger
 $$;
 
 
-ALTER FUNCTION public.users_gestion() OWNER TO postgres;
-
 --
--- Name: users_management(); Type: FUNCTION; Schema: public; Owner: postgres
+-- Name: users_management(); Type: FUNCTION; Schema: public; Owner: -
 --
 
 CREATE FUNCTION public.users_management() RETURNS trigger
@@ -97,14 +86,14 @@ CREATE FUNCTION public.users_management() RETURNS trigger
     IF NEW.USERNAME IS NOT NULL THEN
       SELECT TRUE
       INTO V_EXIST_USERNAME
-      FROM USERS 
+      FROM USERS
       WHERE LOWER(USERNAME) = NEW.USERNAME
       AND ID!=NEW.ID;
       IF V_EXIST_USERNAME THEN
         RAISE EXCEPTION 'cannot have two users with same username';
       END IF;
     END IF;
-    
+
     IF TG_OP = 'UPDATE' THEN
       IF COALESCE (NEW.PASSWORD, '???') != COALESCE (OLD.PASSWORD, '???') THEN
           V_PASSWORD := COALESCE (OLD.PASSWORD, '???');
@@ -121,12 +110,10 @@ CREATE FUNCTION public.users_management() RETURNS trigger
 $$;
 
 
-ALTER FUNCTION public.users_management() OWNER TO postgres;
-
 SET default_tablespace = '';
 
 --
--- Name: attributes; Type: TABLE; Schema: public; Owner: postgres
+-- Name: attributes; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.attributes (
@@ -135,10 +122,8 @@ CREATE TABLE public.attributes (
 );
 
 
-ALTER TABLE public.attributes OWNER TO postgres;
-
 --
--- Name: attributes_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: attributes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.attributes_id_seq
@@ -150,17 +135,15 @@ CREATE SEQUENCE public.attributes_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.attributes_id_seq OWNER TO postgres;
-
 --
--- Name: attributes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: attributes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.attributes_id_seq OWNED BY public.attributes.id;
 
 
 --
--- Name: group_rights; Type: TABLE; Schema: public; Owner: postgres
+-- Name: group_rights; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.group_rights (
@@ -172,10 +155,8 @@ CREATE TABLE public.group_rights (
 );
 
 
-ALTER TABLE public.group_rights OWNER TO postgres;
-
 --
--- Name: group_rights_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: group_rights_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.group_rights_id_seq
@@ -187,17 +168,15 @@ CREATE SEQUENCE public.group_rights_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.group_rights_id_seq OWNER TO postgres;
-
 --
--- Name: group_rights_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: group_rights_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.group_rights_id_seq OWNED BY public.group_rights.id;
 
 
 --
--- Name: groups; Type: TABLE; Schema: public; Owner: postgres
+-- Name: groups; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.groups (
@@ -212,10 +191,8 @@ CREATE TABLE public.groups (
 );
 
 
-ALTER TABLE public.groups OWNER TO postgres;
-
 --
--- Name: groups_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: groups_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.groups_id_seq
@@ -227,17 +204,15 @@ CREATE SEQUENCE public.groups_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.groups_id_seq OWNER TO postgres;
-
 --
--- Name: groups_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: groups_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.groups_id_seq OWNED BY public.groups.id;
 
 
 --
--- Name: jobs; Type: TABLE; Schema: public; Owner: postgres
+-- Name: jobs; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.jobs (
@@ -249,10 +224,8 @@ CREATE TABLE public.jobs (
 );
 
 
-ALTER TABLE public.jobs OWNER TO postgres;
-
 --
--- Name: jobs_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: jobs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.jobs_id_seq
@@ -264,17 +237,15 @@ CREATE SEQUENCE public.jobs_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.jobs_id_seq OWNER TO postgres;
-
 --
--- Name: jobs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: jobs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.jobs_id_seq OWNED BY public.jobs.id;
 
 
 --
--- Name: phone_type; Type: TABLE; Schema: public; Owner: postgres
+-- Name: phone_type; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.phone_type (
@@ -283,10 +254,8 @@ CREATE TABLE public.phone_type (
 );
 
 
-ALTER TABLE public.phone_type OWNER TO postgres;
-
 --
--- Name: phone_type_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: phone_type_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.phone_type_id_seq
@@ -298,17 +267,15 @@ CREATE SEQUENCE public.phone_type_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.phone_type_id_seq OWNER TO postgres;
-
 --
--- Name: phone_type_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: phone_type_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.phone_type_id_seq OWNED BY public.phone_type.id;
 
 
 --
--- Name: rights; Type: TABLE; Schema: public; Owner: postgres
+-- Name: rights; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.rights (
@@ -318,10 +285,8 @@ CREATE TABLE public.rights (
 );
 
 
-ALTER TABLE public.rights OWNER TO postgres;
-
 --
--- Name: rights_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: rights_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.rights_id_seq
@@ -333,17 +298,15 @@ CREATE SEQUENCE public.rights_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.rights_id_seq OWNER TO postgres;
-
 --
--- Name: rights_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: rights_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.rights_id_seq OWNED BY public.rights.id;
 
 
 --
--- Name: user_groups; Type: TABLE; Schema: public; Owner: postgres
+-- Name: user_groups; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.user_groups (
@@ -352,10 +315,8 @@ CREATE TABLE public.user_groups (
 );
 
 
-ALTER TABLE public.user_groups OWNER TO postgres;
-
 --
--- Name: user_phones; Type: TABLE; Schema: public; Owner: postgres
+-- Name: user_phones; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.user_phones (
@@ -365,10 +326,8 @@ CREATE TABLE public.user_phones (
 );
 
 
-ALTER TABLE public.user_phones OWNER TO postgres;
-
 --
--- Name: user_rights; Type: TABLE; Schema: public; Owner: postgres
+-- Name: user_rights; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.user_rights (
@@ -380,10 +339,8 @@ CREATE TABLE public.user_rights (
 );
 
 
-ALTER TABLE public.user_rights OWNER TO postgres;
-
 --
--- Name: user_rights_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: user_rights_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.user_rights_id_seq
@@ -395,17 +352,15 @@ CREATE SEQUENCE public.user_rights_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.user_rights_id_seq OWNER TO postgres;
-
 --
--- Name: user_rights_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: user_rights_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.user_rights_id_seq OWNED BY public.user_rights.id;
 
 
 --
--- Name: users; Type: TABLE; Schema: public; Owner: postgres
+-- Name: users; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.users (
@@ -429,10 +384,8 @@ CREATE TABLE public.users (
 );
 
 
-ALTER TABLE public.users OWNER TO postgres;
-
 --
--- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.users_id_seq
@@ -444,17 +397,15 @@ CREATE SEQUENCE public.users_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.users_id_seq OWNER TO postgres;
-
 --
--- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
 
 --
--- Name: users_pwd_history; Type: TABLE; Schema: public; Owner: postgres
+-- Name: users_pwd_history; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.users_pwd_history (
@@ -465,10 +416,8 @@ CREATE TABLE public.users_pwd_history (
 );
 
 
-ALTER TABLE public.users_pwd_history OWNER TO postgres;
-
 --
--- Name: users_pwd_history_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: users_pwd_history_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.users_pwd_history_id_seq
@@ -480,80 +429,78 @@ CREATE SEQUENCE public.users_pwd_history_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.users_pwd_history_id_seq OWNER TO postgres;
-
 --
--- Name: users_pwd_history_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: users_pwd_history_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.users_pwd_history_id_seq OWNED BY public.users_pwd_history.id;
 
 
 --
--- Name: attributes id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: attributes id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.attributes ALTER COLUMN id SET DEFAULT nextval('public.attributes_id_seq'::regclass);
 
 
 --
--- Name: group_rights id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: group_rights id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.group_rights ALTER COLUMN id SET DEFAULT nextval('public.group_rights_id_seq'::regclass);
 
 
 --
--- Name: groups id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: groups id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.groups ALTER COLUMN id SET DEFAULT nextval('public.groups_id_seq'::regclass);
 
 
 --
--- Name: jobs id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: jobs id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.jobs ALTER COLUMN id SET DEFAULT nextval('public.jobs_id_seq'::regclass);
 
 
 --
--- Name: phone_type id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: phone_type id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.phone_type ALTER COLUMN id SET DEFAULT nextval('public.phone_type_id_seq'::regclass);
 
 
 --
--- Name: rights id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: rights id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.rights ALTER COLUMN id SET DEFAULT nextval('public.rights_id_seq'::regclass);
 
 
 --
--- Name: user_rights id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: user_rights id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.user_rights ALTER COLUMN id SET DEFAULT nextval('public.user_rights_id_seq'::regclass);
 
 
 --
--- Name: users id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
 
 
 --
--- Name: users_pwd_history id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: users_pwd_history id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.users_pwd_history ALTER COLUMN id SET DEFAULT nextval('public.users_pwd_history_id_seq'::regclass);
 
 
 --
--- Name: attributes attributes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: attributes attributes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.attributes
@@ -561,7 +508,7 @@ ALTER TABLE ONLY public.attributes
 
 
 --
--- Name: group_rights group_rights_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: group_rights group_rights_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.group_rights
@@ -569,7 +516,7 @@ ALTER TABLE ONLY public.group_rights
 
 
 --
--- Name: groups groups_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: groups groups_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.groups
@@ -577,7 +524,7 @@ ALTER TABLE ONLY public.groups
 
 
 --
--- Name: groups groups_uuid_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: groups groups_uuid_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.groups
@@ -585,7 +532,7 @@ ALTER TABLE ONLY public.groups
 
 
 --
--- Name: jobs jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: jobs jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.jobs
@@ -593,7 +540,7 @@ ALTER TABLE ONLY public.jobs
 
 
 --
--- Name: jobs jobs_uuid_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: jobs jobs_uuid_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.jobs
@@ -601,7 +548,7 @@ ALTER TABLE ONLY public.jobs
 
 
 --
--- Name: phone_type phone_type_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: phone_type phone_type_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.phone_type
@@ -609,7 +556,7 @@ ALTER TABLE ONLY public.phone_type
 
 
 --
--- Name: rights rights_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: rights rights_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.rights
@@ -617,7 +564,7 @@ ALTER TABLE ONLY public.rights
 
 
 --
--- Name: user_groups user_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_groups user_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.user_groups
@@ -625,7 +572,7 @@ ALTER TABLE ONLY public.user_groups
 
 
 --
--- Name: user_rights user_rights_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_rights user_rights_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.user_rights
@@ -633,7 +580,7 @@ ALTER TABLE ONLY public.user_rights
 
 
 --
--- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.users
@@ -641,7 +588,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: users_pwd_history users_pwd_history_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: users_pwd_history users_pwd_history_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.users_pwd_history
@@ -649,7 +596,7 @@ ALTER TABLE ONLY public.users_pwd_history
 
 
 --
--- Name: users users_uuid_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: users users_uuid_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.users
@@ -657,14 +604,14 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: users trg_users_ins_upd; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: users trg_users_ins_upd; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER trg_users_ins_upd BEFORE INSERT OR UPDATE ON public.users FOR EACH ROW EXECUTE PROCEDURE public.users_management();
 
 
 --
--- Name: group_rights fk_groups_right; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: group_rights fk_groups_right; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.group_rights
@@ -672,7 +619,7 @@ ALTER TABLE ONLY public.group_rights
 
 
 --
--- Name: user_groups fk_groups_user; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_groups fk_groups_user; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.user_groups
@@ -680,7 +627,7 @@ ALTER TABLE ONLY public.user_groups
 
 
 --
--- Name: groups fk_id_parentgroup; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: groups fk_id_parentgroup; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.groups
@@ -688,7 +635,7 @@ ALTER TABLE ONLY public.groups
 
 
 --
--- Name: user_phones fk_id_phones_type; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_phones fk_id_phones_type; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.user_phones
@@ -696,7 +643,7 @@ ALTER TABLE ONLY public.user_phones
 
 
 --
--- Name: users_pwd_history fk_id_user_pwd_history; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: users_pwd_history fk_id_user_pwd_history; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.users_pwd_history
@@ -704,7 +651,7 @@ ALTER TABLE ONLY public.users_pwd_history
 
 
 --
--- Name: user_rights fk_impacted_group; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_rights fk_impacted_group; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.user_rights
@@ -712,7 +659,7 @@ ALTER TABLE ONLY public.user_rights
 
 
 --
--- Name: group_rights fk_impacted_group; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: group_rights fk_impacted_group; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.group_rights
@@ -720,7 +667,7 @@ ALTER TABLE ONLY public.group_rights
 
 
 --
--- Name: user_rights fk_impacted_user; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_rights fk_impacted_user; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.user_rights
@@ -728,7 +675,7 @@ ALTER TABLE ONLY public.user_rights
 
 
 --
--- Name: group_rights fk_impacted_user; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: group_rights fk_impacted_user; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.group_rights
@@ -736,7 +683,7 @@ ALTER TABLE ONLY public.group_rights
 
 
 --
--- Name: user_phones fk_phones_user; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_phones fk_phones_user; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.user_phones
@@ -744,7 +691,7 @@ ALTER TABLE ONLY public.user_phones
 
 
 --
--- Name: group_rights fk_rights_group; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: group_rights fk_rights_group; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.group_rights
@@ -752,7 +699,7 @@ ALTER TABLE ONLY public.group_rights
 
 
 --
--- Name: user_rights fk_rights_user; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_rights fk_rights_user; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.user_rights
@@ -760,7 +707,7 @@ ALTER TABLE ONLY public.user_rights
 
 
 --
--- Name: user_groups fk_users_group; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_groups fk_users_group; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.user_groups
@@ -768,7 +715,7 @@ ALTER TABLE ONLY public.user_groups
 
 
 --
--- Name: users fk_users_job; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: users fk_users_job; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.users
@@ -776,7 +723,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: user_rights fk_users_right; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_rights fk_users_right; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.user_rights

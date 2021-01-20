@@ -69,14 +69,14 @@ If you have kubernetes cluster access run:
 ```bash
 # This assume that you are using `make forward` or make `forward-master`
 export POSTGRES_PASSWORD=$(kubectl get secret --namespace develop db-develop-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
-PGPASSWORD="$POSTGRES_PASSWORD" pg_dump -Csc -h 127.0.0.1 -U postgres > schema/koleg.sql
+PGPASSWORD="$POSTGRES_PASSWORD" pg_dump -Csc -h 127.0.0.1 -U postgres koleg > schema/koleg.sql
 ```
 
 If you want to restore on master cluster replace first line `develop` with `master` namespace and `db-production-postgresql`:
 ```bash
 # This assume that you are using `make forward` or make `forward-master`
 export POSTGRES_PASSWORD=$(kubectl get secret --namespace master db-production-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
-PGPASSWORD="$POSTGRES_PASSWORD" pg_dump -Csc -h 127.0.0.1 -U postgres > schema/koleg.sql
+PGPASSWORD="$POSTGRES_PASSWORD" pg_dump -Csc -h 127.0.0.1 -U postgres koleg > schema/koleg.sql
 ```
 
 #### With kubectl only
