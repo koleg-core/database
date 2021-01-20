@@ -25,6 +25,5 @@ forward: ## Forward dev database port to localhost
 
 forward-master: ## Forward prod database port to localhost
 	@echo User: postgres
-	@echo Password: $$(kubectl get secret --namespace master db-develop-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
+	@echo Password: $$(kubectl get secret --namespace master db-production-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
 	@kubectl port-forward --namespace master svc/db-production-postgresql 5432:5432
-
